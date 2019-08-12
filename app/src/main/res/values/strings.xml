@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Countries</string>
+
+    <string name="path_flag_size_small">png100px/</string>
+    <string name="path_flag_size_medium">png250px/</string>
+    <string name="path_flag_size_large">png1000px/</string>
+
+    <string name="retry">Download failed, try again</string>
 </resources>
