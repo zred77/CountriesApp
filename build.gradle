@@ -2,9 +2,10 @@ buildscript {
     apply from: "dependencies.gradle"
     addRepos(repositories)
     dependencies {
-        classpath deps.plugin.androidGradle
+        classpath "com.android.tools.build:gradle:${versions.plugin.androidGradle}"
         classpath deps.plugin.kotlin
         classpath deps.plugin.junit5
+        classpath deps.plugin.safeArgs
     }
     repositories {
         google()

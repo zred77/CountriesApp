@@ -2,6 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
+apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: "de.mannodermaus.android-junit5"
 
 android {
@@ -17,6 +18,8 @@ android {
         testInstrumentationRunnerArgument "runnerBuilder", "de.mannodermaus.junit5.AndroidJUnit5Builder"
         multiDexEnabled true
         buildConfigField "String", "RESTCOUNTRIES_BASE_URL", "\"https://restcountries.eu/rest/v2/\""
+        buildConfigField "String", "FLAGS_BASE_URL", "\"https://raw.githubusercontent.com/hjnilsson/country-flags/master/\""
+
     }
     buildTypes {
         release {
@@ -37,6 +40,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    dataBinding {
+        enabled = true
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 androidExtensions {
@@ -51,8 +60,15 @@ dependencies {
     implementation deps.androidX.corektx
     implementation deps.androidX.constraintlayout
     implementation deps.androidX.materialComponents
+    implementation deps.androidX.navFragmentKtx
+    implementation deps.androidX.navUiKtx
+    implementation deps.androidX.lifecycleViewModelKtx
+    implementation deps.androidX.fragmentKtx
+    implementation deps.androidX.lifecycleLiveDataKtx
 
     implementation deps.dagger.dagger
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'com.google.android.material:material:1.0.0'
     kapt deps.dagger.compiler
     implementation deps.dagger.android
     kapt deps.dagger.processor
@@ -66,7 +82,10 @@ dependencies {
     kapt deps.moshi.codegen
 
     implementation deps.timber
-    
+
+    implementation deps.glide.glide
+    kapt deps.glide.compiler
+
     testImplementation deps.test.junit5Api
     testRuntimeOnly deps.test.junit5Engine
     testImplementation deps.test.junit5Params
