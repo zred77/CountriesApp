@@ -1,10 +1,14 @@
 package com.veresz.countries.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Country(
     val alpha2Code: String,
     val alpha3Code: String,
     val altSpellings: List<String>,
-    val area: Double,
+    val area: Double?,
     val borders: List<String>,
     val callingCodes: List<String>,
     val capital: String,
@@ -12,7 +16,7 @@ data class Country(
     val currencies: List<Currency>,
     val demonym: String,
     val flag: String,
-    val gini: Double,
+    val gini: Double?,
     val languages: List<Language>,
     val latlng: List<Double>,
     val name: String,
@@ -24,5 +28,5 @@ data class Country(
     val subregion: String,
     val timezones: List<String>,
     val topLevelDomain: List<String>,
-    val translations: Translations
-)
+    val translations: Map<String, String>
+) : Parcelable
