@@ -1,15 +1,12 @@
 package com.veresz.countries.ui.countrylist
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.veresz.countries.model.Country
 import com.veresz.countries.repository.CountryRepository
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
-class CountryListViewModel @Inject constructor(
+class CountryListViewModel constructor(
     private val countryRepository: CountryRepository
 ) : ViewModel() {
 
@@ -35,6 +32,16 @@ class CountryListViewModel @Inject constructor(
                 loadingStateLiveData.value = false
                 countryLiveData.value = Result.failure(it)
             }
+        }
+    }
+
+    class Factory @Inject constructor(
+        private val countryRepository: CountryRepository
+    ) : ViewModelProvider.Factory {
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            return CountryListViewModel(countryRepository) as T
         }
     }
 }

@@ -13,10 +13,7 @@ import com.veresz.countries.R
 import com.veresz.countries.model.Country
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.fragment_countrylist.errorGroup
-import kotlinx.android.synthetic.main.fragment_countrylist.recyclerView
-import kotlinx.android.synthetic.main.fragment_countrylist.retry
-import kotlinx.android.synthetic.main.fragment_countrylist.swipeRefresh
+import kotlinx.android.synthetic.main.fragment_countrylist.*
 
 class CountryListFragment : DaggerFragment() {
 
