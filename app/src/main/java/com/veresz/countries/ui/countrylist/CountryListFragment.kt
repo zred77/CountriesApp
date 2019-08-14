@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -37,11 +39,22 @@ class CountryListFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecyclerView()
+        setWindowInsets()
         retry.setOnClickListener {
             viewModel.refresh()
         }
         swipeRefresh.setOnRefreshListener {
             viewModel.refresh()
+        }
+    }
+
+    private fun setWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(listRootLayout) { view, insets ->
+            recyclerView.updatePadding(
+                    top = insets.systemWindowInsetTop,
+                    bottom = insets.systemWindowInsetBottom
+            )
+            insets
         }
     }
 

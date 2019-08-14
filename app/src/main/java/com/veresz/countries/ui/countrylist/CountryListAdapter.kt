@@ -3,8 +3,11 @@ package com.veresz.countries.ui.countrylist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.view.drawToBitmap
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -12,8 +15,7 @@ import com.veresz.countries.R
 import com.veresz.countries.model.Country
 import com.veresz.countries.util.image.ImageSize.small
 import com.veresz.countries.util.image.loadFlag
-import kotlinx.android.synthetic.main.item_country.view.countryName
-import kotlinx.android.synthetic.main.item_country.view.flag
+import kotlinx.android.synthetic.main.item_country.view.*
 
 internal class CountryListAdapter : ListAdapter<Country, CountryViewHolder>(CountryDiffCallback()) {
 
@@ -35,10 +37,14 @@ internal class CountryViewHolder(
         view.flag.loadFlag(country.alpha2Code, small, true)
         view.countryName.text = country.name
         view.setOnClickListener {
+            val palette = Palette.Builder(view.flag.drawToBitmap()).generate()
+            val defaultColor = ContextCompat.getColor(view.context, R.color.white)
+            val dominantColor = palette.getDominantColor(defaultColor)
+
             view.flag.transitionName = "flag"
-            val direction = CountryListFragmentDirections.actionCountryListFragmentToCountryDetailFragment(country)
+            val direction = CountryListFragmentDirections.actionCountryListFragmentToCountryDetailFragment(country, dominantColor)
             val extras = FragmentNavigatorExtras(
-                view.flag to "flag"
+                    view.flag to "flag"
             )
             view.findNavController().navigate(direction, extras)
         }

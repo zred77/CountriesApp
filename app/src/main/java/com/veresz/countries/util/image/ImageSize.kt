@@ -9,5 +9,5 @@ enum class ImageSize(
 
     small(R.string.path_flag_size_small),
     medium(R.string.path_flag_size_small),
-    large(R.string.path_flag_size_small)
+    large(R.string.path_flag_size_large)
 }

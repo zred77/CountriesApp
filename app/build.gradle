@@ -65,6 +65,7 @@ dependencies {
     implementation deps.androidX.lifecycleViewModelKtx
     implementation deps.androidX.fragmentKtx
     implementation deps.androidX.lifecycleLiveDataKtx
+    implementation deps.androidX.palette
 
     implementation deps.dagger.dagger
     implementation 'androidx.appcompat:appcompat:1.0.2'
@@ -83,8 +84,7 @@ dependencies {
 
     implementation deps.timber
 
-    implementation deps.glide.glide
-    kapt deps.glide.compiler
+    implementation deps.coil.coil
 
     testImplementation deps.test.junit5Api
     testRuntimeOnly deps.test.junit5Engine

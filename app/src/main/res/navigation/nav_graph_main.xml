@@ -23,6 +23,9 @@
         <argument
             android:name="country"
             app:argType="com.veresz.countries.model.Country" />
+        <argument
+            android:name="dominantColor"
+            app:argType="integer" />
 
     </fragment>
 
