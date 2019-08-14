@@ -26,7 +26,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/spacing_double"
         android:lines="1"
-        android:textColor="@color/primaryTextColor"
         app:layout_constraintBottom_toBottomOf="@+id/flag"
         app:layout_constraintStart_toEndOf="@+id/flag"
         app:layout_constraintTop_toTopOf="@+id/flag"

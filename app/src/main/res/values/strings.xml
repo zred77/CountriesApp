@@ -6,4 +6,13 @@
     <string name="path_flag_size_large">png1000px/</string>
 
     <string name="retry">Download failed, try again</string>
+    <string name="capital">Capital</string>
+    <string name="region">Region</string>
+    <string name="language">Language</string>
+    <string name="currency">Currency</string>
+
+    <string name="detail_language_with_nativename">%1$s (%2$s)</string>
+    <string name="detail_region_with_subregion">%1$s, %2$s</string>
+    <string name="detail_currencies_with_name_and_symbol">%1$s - %2$s (%3$s)</string>
+
 </resources>

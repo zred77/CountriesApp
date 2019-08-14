@@ -1,16 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/fragment_countrydetail">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin" />
+    <data>
 
-</androidx.core.widget.NestedScrollView>
+        <variable
+            name="country"
+            type="com.veresz.countries.model.Country" />
+
+        <import type="com.veresz.countries.util.CountryUtil" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollingContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:showIn="@layout/fragment_countrydetail">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/startGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="@dimen/spacing_double" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/endGuide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/spacing_double" />
+
+            <TextView
+                android:id="@+id/name"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_double"
+                android:text="@{country.name}"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@tools:sample/cities" />
+
+            <TextView
+                android:id="@+id/nativeName"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{country.nativeName}"
+
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                tools:text="@tools:sample/cities" />
+
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/spacing_double"
+                android:background="@color/divider"
+                app:layout_constraintTop_toBottomOf="@id/nativeName" />
+
+            <TextView
+                android:id="@+id/capitalLabel"
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_default"
+                android:text="@string/capital"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@+id/divider1"
+                tools:text="@tools:sample/cities" />
+
+            <TextView
+                android:id="@+id/capital"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{country.capital}"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@id/capitalLabel"
+                tools:text="@tools:sample/cities" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/spacing_default"
+                android:background="@color/divider"
+                app:layout_constraintTop_toBottomOf="@id/capital" />
+
+            <TextView
+                android:id="@+id/regionLabel"
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_default"
+                android:text="@string/region"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@+id/divider2"
+                tools:text="@tools:sample/cities" />
+
+            <TextView
+                android:id="@+id/region"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{CountryUtil.getRegion(country, context)}"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@id/regionLabel"
+                tools:text="@tools:sample/cities" />
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/spacing_default"
+                android:background="@color/divider"
+                app:layout_constraintTop_toBottomOf="@id/region" />
+
+            <TextView
+                android:id="@+id/languageLabel"
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_default"
+                android:text="@string/language"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@+id/divider3"
+                tools:text="@tools:sample/cities" />
+
+            <TextView
+                android:id="@+id/language"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{CountryUtil.getLanguages(country, context)}"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@id/languageLabel"
+                tools:text="@tools:sample/cities" />
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/spacing_default"
+                android:background="@color/divider"
+                app:layout_constraintTop_toBottomOf="@id/language" />
+
+            <TextView
+                android:id="@+id/currencyLabel"
+                style="@style/TextAppearance.AppCompat.Caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_default"
+                android:text="@string/region"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@+id/divider4"
+                tools:text="@tools:sample/cities" />
+
+            <TextView
+                android:id="@+id/currency"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@{CountryUtil.getCurrencies(country, context)}"
+                app:layout_constraintEnd_toStartOf="@+id/endGuide"
+                app:layout_constraintStart_toStartOf="@+id/startGuide"
+                app:layout_constraintTop_toBottomOf="@id/currencyLabel"
+                tools:text="@tools:sample/cities" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</layout>

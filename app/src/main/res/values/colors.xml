@@ -7,6 +7,6 @@
     <color name="white">#FFFFFF</color>
     <color name="transparentWhite">#CBFFFFFF</color>
 
-    <color name="primaryTextColor">#000000</color>
+    <color name="divider">#BFCCCCCC</color>
 
 </resources>

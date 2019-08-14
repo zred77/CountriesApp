@@ -11,7 +11,8 @@
 
         <action
             android:id="@+id/action_countryListFragment_to_countryDetailFragment"
-            app:destination="@id/countryDetailFragment" />
+            app:destination="@id/countryDetailFragment"
+            app:popUpTo="@+id/countryListFragment" />
 
     </fragment>
 

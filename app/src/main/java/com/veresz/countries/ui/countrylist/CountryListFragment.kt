@@ -15,7 +15,11 @@ import com.veresz.countries.R
 import com.veresz.countries.model.Country
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.fragment_countrylist.*
+import kotlinx.android.synthetic.main.fragment_countrylist.errorGroup
+import kotlinx.android.synthetic.main.fragment_countrylist.listRootLayout
+import kotlinx.android.synthetic.main.fragment_countrylist.recyclerView
+import kotlinx.android.synthetic.main.fragment_countrylist.retry
+import kotlinx.android.synthetic.main.fragment_countrylist.swipeRefresh
 
 class CountryListFragment : DaggerFragment() {
 
@@ -40,6 +44,7 @@ class CountryListFragment : DaggerFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupRecyclerView()
         setWindowInsets()
+        swipeRefresh.setProgressViewOffset(true, -100, 100)
         retry.setOnClickListener {
             viewModel.refresh()
         }
@@ -51,8 +56,8 @@ class CountryListFragment : DaggerFragment() {
     private fun setWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(listRootLayout) { view, insets ->
             recyclerView.updatePadding(
-                    top = insets.systemWindowInsetTop,
-                    bottom = insets.systemWindowInsetBottom
+                top = insets.systemWindowInsetTop,
+                bottom = insets.systemWindowInsetBottom
             )
             insets
         }

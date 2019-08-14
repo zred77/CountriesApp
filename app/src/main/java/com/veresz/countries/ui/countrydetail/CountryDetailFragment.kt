@@ -10,23 +10,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
 import androidx.core.transition.doOnEnd
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.veresz.countries.R
+import com.veresz.countries.databinding.FragmentCountrydetailBinding
 import com.veresz.countries.model.Country
 import com.veresz.countries.util.image.ImageSize
 import com.veresz.countries.util.image.loadFlag
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.fragment_countrydetail.*
+import kotlinx.android.synthetic.main.fragment_countrydetail.collapsingToolbarBackground
+import kotlinx.android.synthetic.main.fragment_countrydetail.flag
+import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar
+import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar_layout
 
 class CountryDetailFragment : DaggerFragment() {
 
+    private lateinit var binding: FragmentCountrydetailBinding
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel by viewModels<CountryDetailViewModel> { viewModelFactory }
@@ -42,12 +48,19 @@ class CountryDetailFragment : DaggerFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_countrydetail, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_countrydetail, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar_layout.contentScrim = ColorDrawable(args.dominantColor)
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
+        toolbar.setNavigationOnClickListener {
+            findNavController().navigateUp()
+        }
+        val dominantColor = ColorDrawable(args.dominantColor)
+        toolbar_layout.contentScrim = dominantColor
+        toolbar_layout.setBackgroundColor(args.dominantColor)
         observeData()
     }
 
@@ -57,6 +70,7 @@ class CountryDetailFragment : DaggerFragment() {
 
     private fun observeData() {
         viewModel.country.observe(this, Observer {
+            binding.country = it
             flag.loadFlag(it.alpha2Code, ImageSize.small, true)
             collapsingToolbarBackground.loadFlag(it.alpha2Code, ImageSize.large)
         })
@@ -67,31 +81,29 @@ class CountryDetailFragment : DaggerFragment() {
         val inSet = TransitionSet().apply {
             addTransition(transition)
             duration = 380
-            interpolator = DecelerateInterpolator()
+            interpolator = AccelerateInterpolator()
             doOnEnd {
                 revealBigFlag()
             }
         }
 
-        val outSet = TransitionSet().apply {
-            addTransition(transition)
-            duration = 380
-            interpolator = AccelerateDecelerateInterpolator()
-            startDelay = 200
-        }
-
         sharedElementEnterTransition = inSet
-        sharedElementReturnTransition = outSet
+        enterTransition = TransitionInflater.from(context).inflateTransition(R.transition.detail_in)
+        returnTransition = TransitionInflater.from(context).inflateTransition(R.transition.detail_out)
     }
 
     private fun revealBigFlag() {
         val center = Pair(flag.left + flag.width / 2, flag.top + flag.height / 2)
         val animSet = AnimatorSet()
-        val reveal = ViewAnimationUtils.createCircularReveal(collapsingToolbarBackground, center.first,
-                center.second, 0f, collapsingToolbarBackground.width.toFloat())
-                .apply {
-                    duration = 400
-                }
+        val reveal = ViewAnimationUtils
+            .createCircularReveal(
+                collapsingToolbarBackground, center.first,
+                center.second, 0f, collapsingToolbarBackground.width.toFloat()
+            )
+            .apply {
+                interpolator = AccelerateInterpolator()
+                duration = 400
+            }
 
         val hide = ValueAnimator.ofFloat(1f, 0f).apply {
             duration = 100
