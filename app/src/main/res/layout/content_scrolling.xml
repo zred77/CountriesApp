@@ -58,12 +58,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{country.nativeName}"
-
                 app:layout_constraintEnd_toStartOf="@+id/endGuide"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="@+id/startGuide"
                 app:layout_constraintTop_toBottomOf="@id/name"
                 tools:text="@tools:sample/cities" />
+
+            <FrameLayout
+                android:id="@+id/mapContainer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@+id/divider1"
+                app:layout_constraintDimensionRatio="2:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@color/colorPrimary"
+                tools:visibility="visible" />
 
             <View
                 android:id="@+id/divider1"

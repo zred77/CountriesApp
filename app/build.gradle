@@ -5,6 +5,9 @@ apply plugin: "kotlin-kapt"
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: "de.mannodermaus.android-junit5"
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     compileSdkVersion versions.compileSdk
 
@@ -19,6 +22,7 @@ android {
         multiDexEnabled true
         buildConfigField "String", "RESTCOUNTRIES_BASE_URL", "\"https://restcountries.eu/rest/v2/\""
         buildConfigField "String", "FLAGS_BASE_URL", "\"https://raw.githubusercontent.com/hjnilsson/country-flags/master/\""
+        manifestPlaceholders = [maps_api_key: properties.getProperty("maps.api.key") ]
 
     }
     buildTypes {
@@ -67,9 +71,9 @@ dependencies {
     implementation deps.androidX.lifecycleLiveDataKtx
     implementation deps.androidX.palette
 
+    implementation deps.gms.maps
+
     implementation deps.dagger.dagger
-    implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.material:material:1.0.0'
     kapt deps.dagger.compiler
     implementation deps.dagger.android
     kapt deps.dagger.processor

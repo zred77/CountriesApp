@@ -2,7 +2,9 @@ package com.veresz.countries.ui.countrydetail
 
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
+import android.content.Intent
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.transition.TransitionSet
@@ -11,13 +13,23 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.transition.doOnEnd
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMapOptions
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
 import com.veresz.countries.R
 import com.veresz.countries.databinding.FragmentCountrydetailBinding
 import com.veresz.countries.model.Country
@@ -25,12 +37,13 @@ import com.veresz.countries.util.image.ImageSize
 import com.veresz.countries.util.image.loadFlag
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
+import kotlinx.android.synthetic.main.content_scrolling.mapContainer
 import kotlinx.android.synthetic.main.fragment_countrydetail.collapsingToolbarBackground
 import kotlinx.android.synthetic.main.fragment_countrydetail.flag
 import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar
 import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar_layout
 
-class CountryDetailFragment : DaggerFragment() {
+class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
 
     private lateinit var binding: FragmentCountrydetailBinding
     @Inject
@@ -62,6 +75,43 @@ class CountryDetailFragment : DaggerFragment() {
         toolbar_layout.contentScrim = dominantColor
         toolbar_layout.setBackgroundColor(args.dominantColor)
         observeData()
+    }
+
+    private fun setupMap() {
+        var mapFragment: SupportMapFragment? = childFragmentManager.findFragmentByTag("mapFragment") as? SupportMapFragment
+        childFragmentManager.commit {
+            if (mapFragment == null) {
+                val googleMapOptions = GoogleMapOptions().liteMode(true)
+                mapFragment = SupportMapFragment.newInstance(googleMapOptions)
+                add(R.id.mapContainer, mapFragment!!, "mapFragment")
+            }
+        }
+        mapFragment?.getMapAsync(this)
+    }
+
+    override fun onMapReady(map: GoogleMap) {
+        val country = viewModel.country.value!!
+        map.uiSettings.isMapToolbarEnabled = false
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(country.latlng[0], country.latlng[1]), 4f))
+        ValueAnimator.ofFloat(0f, 1f).apply {
+            doOnStart {
+                mapContainer.isVisible = true
+            }
+            addUpdateListener {
+                mapContainer.alpha = it.animatedValue as Float
+            }
+            start()
+        }
+        map.setOnMapClickListener {
+            openMaps(country.name)
+        }
+    }
+
+    private fun openMaps(countryName: String) {
+        val uri = Uri.parse("geo:0,0?q=$countryName")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.setPackage("com.google.android.apps.maps")
+        startActivity(intent)
     }
 
     fun getCountry(): Country {
@@ -101,6 +151,9 @@ class CountryDetailFragment : DaggerFragment() {
                 center.second, 0f, collapsingToolbarBackground.width.toFloat()
             )
             .apply {
+                doOnEnd {
+                    setupMap()
+                }
                 interpolator = AccelerateInterpolator()
                 duration = 400
             }
