@@ -72,7 +72,7 @@ class FilterFragment : DaggerFragment() {
             addFilters(it)
         })
         viewModel.countries.observe(this, Observer {
-            getString(R.string.filter_count, it.size.toString())
+            title.text = getString(R.string.filter_count, it.size.toString())
         })
     }
 
