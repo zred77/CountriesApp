@@ -11,13 +11,14 @@ class CountryListViewModel constructor(
     private val countryRepository: CountryRepository
 ) : ViewModel() {
 
-    var selectedFilters = mutableSetOf<String>()
     private val viewStateLiveData = MutableLiveData<ViewState>()
     private val allCountriesLiveData by lazy {
         val liveData = MutableLiveData<List<Country>>()
         refresh()
         liveData
     }
+    var selectedFilters = mutableSetOf<String>()
+    val viewState: LiveData<ViewState> = viewStateLiveData
     val regionFilters = allCountriesLiveData.map { countryList ->
         countryList.distinctBy {
             it.region
@@ -27,22 +28,17 @@ class CountryListViewModel constructor(
             it.isNotBlank()
         }
     }
-
     val countries = MediatorLiveData<List<Country>>().apply {
         addSource(allCountriesLiveData) {
             filterCountries()
         }
     }
 
-    private fun filterCountries() {
-        allCountriesLiveData.value?.let {
-            countries.value = it.filter {
-                selectedFilters.isEmpty() || selectedFilters.contains(it.region)
-            }
+    fun testMethod() {
+        viewModelScope.launch {
+            countryRepository.getCountries()
         }
     }
-
-    val viewState: LiveData<ViewState> = viewStateLiveData
 
     fun refresh() {
         viewModelScope.launch {
@@ -70,6 +66,14 @@ class CountryListViewModel constructor(
             selectedFilters.remove(filter)
         }
         filterCountries()
+    }
+
+    private fun filterCountries() {
+        allCountriesLiveData.value?.let {
+            countries.value = it.filter {
+                selectedFilters.isEmpty() || selectedFilters.contains(it.region)
+            }
+        }
     }
 
     class Factory @Inject constructor(

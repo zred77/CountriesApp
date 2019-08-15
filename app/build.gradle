@@ -50,6 +50,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
 }
 
 androidExtensions {
@@ -94,6 +97,9 @@ dependencies {
     testRuntimeOnly deps.test.junit5Engine
     testImplementation deps.test.junit5Params
     testImplementation deps.test.mockk
+    testImplementation deps.kotlin.coroutine
+    testImplementation deps.test.coroutine
+    testImplementation deps.test.archCore
 
     androidTestImplementation deps.test.junit5Api
     androidTestImplementation deps.test.junit5Instrumentation
