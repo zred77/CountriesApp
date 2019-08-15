@@ -2,19 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph_main"
-    app:startDestination="@id/countryListFragment">
-
-    <fragment
-        android:id="@+id/countryListFragment"
-        android:name="com.veresz.countries.ui.countrylist.CountryListFragment"
-        android:label="CountryListFragment">
-
-        <action
-            android:id="@+id/action_countryListFragment_to_countryDetailFragment"
-            app:destination="@id/countryDetailFragment"
-            app:popUpTo="@+id/countryListFragment" />
-
-    </fragment>
+    app:startDestination="@id/filterable">
 
     <fragment
         android:id="@+id/countryDetailFragment"
@@ -29,5 +17,32 @@
             app:argType="integer" />
 
     </fragment>
+
+    <navigation
+        android:id="@+id/filterable"
+        app:startDestination="@id/countryListFragment">
+
+        <fragment
+            android:id="@+id/filterFragment"
+            android:name="com.veresz.countries.ui.filter.FilterFragment"
+            android:label="FilterFragment" />
+
+        <fragment
+            android:id="@+id/countryListFragment"
+            android:name="com.veresz.countries.ui.countrylist.CountryListFragment"
+            android:label="CountryListFragment">
+
+            <action
+                android:id="@+id/action_countryListFragment_to_countryDetailFragment"
+                app:destination="@id/countryDetailFragment"
+                app:popUpTo="@+id/countryListFragment" />
+
+            <action
+                android:id="@+id/action_countryListFragment_to_filterFragment"
+                app:destination="@id/filterFragment"
+                app:popUpTo="@+id/countryListFragment" />
+
+        </fragment>
+    </navigation>
 
 </navigation>

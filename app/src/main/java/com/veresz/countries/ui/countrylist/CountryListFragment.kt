@@ -6,27 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.veresz.countries.R
 import com.veresz.countries.model.Country
+import com.veresz.countries.ui.ViewState
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.fragment_countrylist.errorGroup
-import kotlinx.android.synthetic.main.fragment_countrylist.listRootLayout
-import kotlinx.android.synthetic.main.fragment_countrylist.recyclerView
-import kotlinx.android.synthetic.main.fragment_countrylist.retry
-import kotlinx.android.synthetic.main.fragment_countrylist.swipeRefresh
+import kotlinx.android.synthetic.main.fragment_countrylist.*
 
 class CountryListFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val adapter by lazy { CountryListAdapter() }
-    private val viewModel by viewModels<CountryListViewModel> { viewModelFactory }
+    private val viewModel by navGraphViewModels<CountryListViewModel>(R.id.filterable) { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,14 +41,17 @@ class CountryListFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        fab.isVisible = adapter.itemCount != 0
         setupRecyclerView()
         setWindowInsets()
-        swipeRefresh.setProgressViewOffset(true, -100, 100)
         retry.setOnClickListener {
             viewModel.refresh()
         }
         swipeRefresh.setOnRefreshListener {
             viewModel.refresh()
+        }
+        fab.setOnClickListener {
+            showFilter()
         }
     }
 
@@ -59,6 +61,9 @@ class CountryListFragment : DaggerFragment() {
                 top = insets.systemWindowInsetTop,
                 bottom = insets.systemWindowInsetBottom
             )
+            fab.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = insets.systemWindowInsetBottom + resources.getDimension(R.dimen.spacing_double).toInt()
+            }
             insets
         }
     }
@@ -69,18 +74,17 @@ class CountryListFragment : DaggerFragment() {
     }
 
     private fun observeData() {
-        viewModel.countries().observe(this, Observer {
-            when {
-                it.isSuccess -> {
-                    showCountryList(it)
-                }
-                it.isFailure -> {
+        viewModel.countries.observe(this, Observer {
+            fab.isVisible = true
+            showCountryList(it)
+        })
+        viewModel.viewState.observe(this, Observer {
+            when (it) {
+                is Error -> {
                     showErrorState()
                 }
             }
-        })
-        viewModel.loadingState().observe(this, Observer {
-            setLoadingState(it)
+            setLoadingState(it is ViewState.Loading)
         })
     }
 
@@ -88,8 +92,8 @@ class CountryListFragment : DaggerFragment() {
         swipeRefresh.isRefreshing = isLoading
     }
 
-    private fun showCountryList(it: Result<List<Country>>) {
-        adapter.submitList(it.getOrElse { listOf() })
+    private fun showCountryList(it: List<Country>) {
+        adapter.submitList(it)
         recyclerView.isVisible = true
         errorGroup.isVisible = false
     }
@@ -97,5 +101,10 @@ class CountryListFragment : DaggerFragment() {
     private fun showErrorState() {
         recyclerView.isVisible = false
         errorGroup.isVisible = true
+    }
+
+    private fun showFilter() {
+        val direction = CountryListFragmentDirections.actionCountryListFragmentToFilterFragment()
+        findNavController().navigate(direction)
     }
 }

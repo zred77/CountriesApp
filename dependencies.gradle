@@ -19,7 +19,7 @@ ext {
                     appcompat            : "1.1.0-beta01",
                     constraintlayout     : "1.1.3",
                     recyclerview         : "1.0.0",
-                    materialComponents   : "1.0.0-rc01",
+                    materialComponents   : "1.1.0-alpha09",
                     viewPager            : "1.0.0",
                     navUiKtx             : "2.1.0-rc01",
                     navFragmentKtx       : "2.1.0-rc01",

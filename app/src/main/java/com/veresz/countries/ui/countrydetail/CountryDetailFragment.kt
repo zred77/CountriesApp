@@ -1,5 +1,6 @@
 package com.veresz.countries.ui.countrydetail
 
+import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ValueAnimator
 import android.content.Intent
@@ -24,11 +25,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMapOptions
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
 import com.veresz.countries.R
 import com.veresz.countries.databinding.FragmentCountrydetailBinding
@@ -37,14 +34,12 @@ import com.veresz.countries.util.image.ImageSize
 import com.veresz.countries.util.image.loadFlag
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.content_scrolling.mapContainer
-import kotlinx.android.synthetic.main.fragment_countrydetail.collapsingToolbarBackground
-import kotlinx.android.synthetic.main.fragment_countrydetail.flag
-import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar
-import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar_layout
+import kotlinx.android.synthetic.main.content_scrolling.*
+import kotlinx.android.synthetic.main.fragment_countrydetail.*
 
 class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
 
+    private val anims = mutableSetOf<Animator>()
     private lateinit var binding: FragmentCountrydetailBinding
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -77,7 +72,13 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
         observeData()
     }
 
+    override fun onStop() {
+        anims.forEach { it.cancel() }
+        super.onStop()
+    }
+
     private fun setupMap() {
+        if (!isAdded) return
         var mapFragment: SupportMapFragment? = childFragmentManager.findFragmentByTag("mapFragment") as? SupportMapFragment
         childFragmentManager.commit {
             if (mapFragment == null) {
@@ -93,7 +94,7 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
         val country = viewModel.country.value!!
         map.uiSettings.isMapToolbarEnabled = false
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(country.latlng[0], country.latlng[1]), 4f))
-        ValueAnimator.ofFloat(0f, 1f).apply {
+        anims.add(ValueAnimator.ofFloat(0f, 1f).apply {
             doOnStart {
                 mapContainer.isVisible = true
             }
@@ -101,7 +102,7 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
                 mapContainer.alpha = it.animatedValue as Float
             }
             start()
-        }
+        })
         map.setOnMapClickListener {
             openMaps(country.name)
         }
@@ -166,6 +167,7 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
         }
         animSet.playTogether(reveal, hide)
         collapsingToolbarBackground.visibility = View.VISIBLE
+        anims.add(animSet)
         animSet.start()
     }
 }

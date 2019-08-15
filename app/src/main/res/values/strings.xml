@@ -15,4 +15,10 @@
     <string name="detail_region_with_subregion">%1$s, %2$s</string>
     <string name="detail_currencies_with_name_and_symbol">%1$s - %2$s (%3$s)</string>
 
+    <string name="reset">Reset</string>
+    <string name="filter">Filter</string>
+    <string name="filter_count">%1$s match</string>
+    <string name="filter_region">By region</string>
+
+
 </resources>

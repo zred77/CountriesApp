@@ -3,6 +3,7 @@ package com.veresz.countries.ui.countrylist
 import androidx.lifecycle.*
 import com.veresz.countries.model.Country
 import com.veresz.countries.repository.CountryRepository
+import com.veresz.countries.ui.ViewState
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
@@ -10,29 +11,65 @@ class CountryListViewModel constructor(
     private val countryRepository: CountryRepository
 ) : ViewModel() {
 
-    private val loadingStateLiveData = MutableLiveData<Boolean>()
-    private val countryLiveData by lazy {
-        val liveData = MutableLiveData<Result<List<Country>>>()
+    var selectedFilters = mutableSetOf<String>()
+    private val viewStateLiveData = MutableLiveData<ViewState>()
+    private val allCountriesLiveData by lazy {
+        val liveData = MutableLiveData<List<Country>>()
         refresh()
         liveData
     }
+    val regionFilters = allCountriesLiveData.map { countryList ->
+        countryList.distinctBy {
+            it.region
+        }.map {
+            it.region
+        }.filter {
+            it.isNotBlank()
+        }
+    }
 
-    fun countries(): LiveData<Result<List<Country>>> = countryLiveData
-    fun loadingState(): LiveData<Boolean> = loadingStateLiveData
+    val countries = MediatorLiveData<List<Country>>().apply {
+        addSource(allCountriesLiveData) {
+            filterCountries()
+        }
+    }
+
+    private fun filterCountries() {
+        allCountriesLiveData.value?.let {
+            countries.value = it.filter {
+                selectedFilters.isEmpty() || selectedFilters.contains(it.region)
+            }
+        }
+    }
+
+    val viewState: LiveData<ViewState> = viewStateLiveData
 
     fun refresh() {
         viewModelScope.launch {
             runCatching {
-                loadingStateLiveData.value = true
+                viewStateLiveData.value = ViewState.Loading
                 countryRepository.getCountries()
             }.onSuccess {
-                loadingStateLiveData.value = false
-                countryLiveData.value = Result.success(it)
+                viewStateLiveData.value = ViewState.Data
+                allCountriesLiveData.value = it
             }.onFailure {
-                loadingStateLiveData.value = false
-                countryLiveData.value = Result.failure(it)
+                viewStateLiveData.value = ViewState.Error
             }
         }
+    }
+
+    fun resetFilters() {
+        selectedFilters.clear()
+        filterCountries()
+    }
+
+    fun onFilterChecked(filter: String, checked: Boolean) {
+        if (checked) {
+            selectedFilters.add(filter)
+        } else {
+            selectedFilters.remove(filter)
+        }
+        filterCountries()
     }
 
     class Factory @Inject constructor(
