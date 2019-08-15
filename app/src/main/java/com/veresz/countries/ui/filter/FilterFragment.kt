@@ -10,13 +10,18 @@ import androidx.core.view.children
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import com.google.android.material.chip.Chip
 import com.veresz.countries.R
 import com.veresz.countries.ui.countrylist.CountryListViewModel
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.fragment_filter.*
+import kotlinx.android.synthetic.main.fragment_filter.chipGroup
+import kotlinx.android.synthetic.main.fragment_filter.close
+import kotlinx.android.synthetic.main.fragment_filter.filterRoot
+import kotlinx.android.synthetic.main.fragment_filter.reset
+import kotlinx.android.synthetic.main.fragment_filter.title
 
 class FilterFragment : DaggerFragment() {
 
@@ -40,6 +45,9 @@ class FilterFragment : DaggerFragment() {
         reset.setOnClickListener {
             onResetClicked()
         }
+        close.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
 
     private fun setTransitions() {
@@ -51,8 +59,10 @@ class FilterFragment : DaggerFragment() {
     private fun setWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(filterRoot) { view, insets ->
             filterRoot.updatePadding(
-                    top = insets.systemWindowInsetTop,
-                    bottom = insets.systemWindowInsetBottom
+                left = insets.systemWindowInsetLeft,
+                top = insets.systemWindowInsetTop,
+                right = insets.systemWindowInsetRight,
+                bottom = insets.systemWindowInsetBottom
             )
             insets
         }
@@ -61,10 +71,10 @@ class FilterFragment : DaggerFragment() {
     private fun onResetClicked() {
         viewModel.resetFilters()
         chipGroup.children
-                .filterIsInstance<Chip>()
-                .forEach { chip ->
-                    chip.isChecked = false
-                }
+            .filterIsInstance<Chip>()
+            .forEach { chip ->
+                chip.isChecked = false
+            }
     }
 
     private fun observeData() {

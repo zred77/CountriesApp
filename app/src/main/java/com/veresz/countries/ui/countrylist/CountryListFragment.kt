@@ -18,7 +18,12 @@ import com.veresz.countries.model.Country
 import com.veresz.countries.ui.ViewState
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.fragment_countrylist.*
+import kotlinx.android.synthetic.main.fragment_countrylist.errorGroup
+import kotlinx.android.synthetic.main.fragment_countrylist.fab
+import kotlinx.android.synthetic.main.fragment_countrylist.recyclerView
+import kotlinx.android.synthetic.main.fragment_countrylist.retry
+import kotlinx.android.synthetic.main.fragment_countrylist.rootLayout
+import kotlinx.android.synthetic.main.fragment_countrylist.swipeRefresh
 
 class CountryListFragment : DaggerFragment() {
 
@@ -26,11 +31,6 @@ class CountryListFragment : DaggerFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val adapter by lazy { CountryListAdapter() }
     private val viewModel by navGraphViewModels<CountryListViewModel>(R.id.filterable) { viewModelFactory }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        observeData()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +41,7 @@ class CountryListFragment : DaggerFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        observeData()
         fab.isVisible = adapter.itemCount != 0
         setupRecyclerView()
         setWindowInsets()
@@ -56,12 +57,16 @@ class CountryListFragment : DaggerFragment() {
     }
 
     private fun setWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(listRootLayout) { view, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
             recyclerView.updatePadding(
+                left = insets.systemWindowInsetLeft,
                 top = insets.systemWindowInsetTop,
+                right = insets.systemWindowInsetRight,
                 bottom = insets.systemWindowInsetBottom
             )
             fab.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                leftMargin = insets.systemWindowInsetLeft
+                rightMargin = insets.systemWindowInsetRight + resources.getDimension(R.dimen.spacing_double).toInt()
                 bottomMargin = insets.systemWindowInsetBottom + resources.getDimension(R.dimen.spacing_double).toInt()
             }
             insets

@@ -17,7 +17,9 @@ import android.view.animation.AccelerateInterpolator
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.transition.doOnEnd
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.fragment.app.viewModels
@@ -25,7 +27,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMapOptions
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.veresz.countries.R
 import com.veresz.countries.databinding.FragmentCountrydetailBinding
@@ -34,8 +40,12 @@ import com.veresz.countries.util.image.ImageSize
 import com.veresz.countries.util.image.loadFlag
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
-import kotlinx.android.synthetic.main.content_scrolling.*
-import kotlinx.android.synthetic.main.fragment_countrydetail.*
+import kotlinx.android.synthetic.main.content_scrolling.mapContainer
+import kotlinx.android.synthetic.main.fragment_countrydetail.collapsingToolbarBackground
+import kotlinx.android.synthetic.main.fragment_countrydetail.flag
+import kotlinx.android.synthetic.main.fragment_countrydetail.rootLayout
+import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar
+import kotlinx.android.synthetic.main.fragment_countrydetail.toolbar_layout
 
 class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
 
@@ -62,6 +72,7 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setWindowInsets()
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_24dp)
         toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -70,6 +81,17 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
         toolbar_layout.contentScrim = dominantColor
         toolbar_layout.setBackgroundColor(args.dominantColor)
         observeData()
+    }
+
+    private fun setWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(rootLayout) { view, insets ->
+            rootLayout.updatePadding(
+                left = insets.systemWindowInsetLeft,
+                right = insets.systemWindowInsetRight,
+                bottom = insets.systemWindowInsetBottom
+            )
+            insets
+        }
     }
 
     override fun onStop() {
