@@ -81,6 +81,9 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
         toolbar_layout.contentScrim = dominantColor
         toolbar_layout.setBackgroundColor(args.dominantColor)
         observeData()
+        if (viewModel.started == true) {
+            setupMap()
+        }
     }
 
     private fun setWindowInsets() {
@@ -150,6 +153,7 @@ class CountryDetailFragment : DaggerFragment(), OnMapReadyCallback {
     }
 
     private fun setTransitions() {
+        viewModel.started = true
         val transition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
         val inSet = TransitionSet().apply {
             addTransition(transition)
