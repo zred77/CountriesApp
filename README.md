@@ -12,3 +12,6 @@ Libraries/solutions used in app:
 - Retrofit
 - Moshi
 - Coil
+
+Add your own google maps api key to local.properties with the following key:
+`maps.api.key`
