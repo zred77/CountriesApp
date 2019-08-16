@@ -1,5 +1,5 @@
 # CountriesApp
-An app using restcountries.eu rest API written in kotlin language
+An app using [restcountries.eu](http://restcountries.eu/) rest API written in kotlin language
 
 It starts with displaying a list of countries. The list is filterable (currently just by region) through a filter panel. By clicking a list item a detail screen appears with more details about the selected country. 
 
